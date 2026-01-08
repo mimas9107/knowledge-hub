@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Hub - 知識管理平台</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 側邊欄 -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>📚 Knowledge Hub</h1>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-view="documents">
+                    <span class="icon">📁</span> 文件管理
+                </a>
+                <a href="#" class="nav-item" data-view="search">
+                    <span class="icon">🔍</span> 語意搜尋
+                </a>
+                <a href="#" class="nav-item" data-view="chat">
+                    <span class="icon">💬</span> 問答模式
+                </a>
+                <a href="#" class="nav-item" data-view="settings">
+                    <span class="icon">⚙️</span> 系統設定
+                </a>
+            </nav>
+            
+            <div class="index-status">
+                <h3>索引狀態</h3>
+                <div id="status-summary">
+                    <div class="status-item">
+                        <span class="label">已索引</span>
+                        <span class="value" id="indexed-count">-</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="label">待處理</span>
+                        <span class="value" id="pending-count">-</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- 主要內容區 -->
+        <main class="main-content">
+            <!-- 文件管理視圖 -->
+            <section id="view-documents" class="view active">
+                <header class="view-header">
+                    <h2>文件管理</h2>
+                    <div class="actions">
+                        <button id="btn-scan" class="btn btn-primary">🔄 掃描目錄</button>
+                        <button id="btn-index-all" class="btn btn-secondary">⚙️ 建立索引</button>
+                    </div>
+                </header>
+                
+                <div class="filters">
+                    <select id="filter-folder">
+                        <option value="">所有資料夾</option>
+                    </select>
+                    <select id="filter-status">
+                        <option value="">所有狀態</option>
+                        <option value="pending">待處理</option>
+                        <option value="indexed">已索引</option>
+                        <option value="failed">失敗</option>
+                    </select>
+                    <select id="filter-type">
+                        <option value="">所有類型</option>
+                        <option value="pdf">PDF</option>
+                        <option value="pptx">PPTX</option>
+                        <option value="md">Markdown</option>
+                        <option value="docx">DOCX</option>
+                    </select>
+                </div>
+                
+                <div id="documents-list" class="documents-grid">
+                    <!-- 文件卡片將動態生成 -->
+                </div>
+            </section>
+            
+            <!-- 搜尋視圖 -->
+            <section id="view-search" class="view">
+                <header class="view-header">
+                    <h2>語意搜尋</h2>
+                </header>
+                
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="輸入搜尋內容...">
+                    <button id="btn-search" class="btn btn-primary">搜尋</button>
+                </div>
+                
+                <div id="search-results" class="results-list">
+                    <p class="placeholder">輸入關鍵字開始搜尋</p>
+                </div>
+            </section>
+            
+            <!-- 問答視圖 -->
+            <section id="view-chat" class="view">
+                <header class="view-header">
+                    <h2>知識問答</h2>
+                </header>
+                
+                <div id="chat-messages" class="chat-container">
+                    <div class="message system">
+                        <p>你好！我可以根據你的知識庫回答問題。試著問我任何關於你講義內容的問題吧！</p>
+                    </div>
+                </div>
+                
+                <div class="chat-input">
+                    <input type="text" id="chat-input" placeholder="輸入你的問題...">
+                    <button id="btn-chat" class="btn btn-primary">發送</button>
+                </div>
+            </section>
+            
+            <!-- 設定視圖 -->
+            <section id="view-settings" class="view">
+                <header class="view-header">
+                    <h2>系統設定</h2>
+                </header>
+                
+                <div class="settings-form">
+                    <div class="setting-group">
+                        <label>掃描目錄</label>
+                        <input type="text" id="setting-scan-path" readonly>
+                    </div>
+                    <div class="setting-group">
+                        <label>Embedding 模型</label>
+                        <input type="text" id="setting-embedding-model" readonly>
+                    </div>
+                    <div class="setting-group">
+                        <label>Chunk 大小</label>
+                        <input type="number" id="setting-chunk-size" readonly>
+                    </div>
+                    <div class="setting-group">
+                        <label>LLM 提供者</label>
+                        <input type="text" id="setting-llm-provider" readonly>
+                    </div>
+                    <p class="hint">修改設定請編輯 .env 檔案並重啟服務</p>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
