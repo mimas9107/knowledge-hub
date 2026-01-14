@@ -40,6 +40,8 @@ class Config:
     EMBEDDING_MODEL = _env.get('EMBEDDING_MODEL', 'paraphrase-multilingual-MiniLM-L12-v2')
     CHUNK_SIZE = int(_env.get('CHUNK_SIZE', 500))
     CHUNK_OVERLAP = int(_env.get('CHUNK_OVERLAP', 50))
+    EMBEDDING_BATCH_SIZE = int(_env.get('EMBEDDING_BATCH_SIZE', 32))  # 嵌入批次大小
+    CHUNK_PROCESS_BATCH_SIZE = int(_env.get('CHUNK_PROCESS_BATCH_SIZE', 100))  # 每次處理的 chunk 數量
     
     # LLM 設定
     LLM_PROVIDER = _env.get('LLM_PROVIDER', 'ollama')

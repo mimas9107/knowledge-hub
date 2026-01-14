@@ -44,7 +44,7 @@ def embed_text(text: str) -> List[float]:
     return embedding.tolist()
 
 
-def embed_texts(texts: List[str], batch_size: int = 32) -> List[List[float]]:
+def embed_texts(texts: List[str], batch_size: int = 8) -> List[List[float]]:
     """
     批次將文字轉換為向量
     

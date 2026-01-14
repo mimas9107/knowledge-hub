@@ -4,6 +4,7 @@ Knowledge Hub 索引處理 API
 import uuid
 import threading
 from flask import Blueprint, jsonify, request
+from config import Config
 from models.database import db
 from core.parser import parse_document
 from core.chunker import chunk_document_with_pages
@@ -32,6 +33,7 @@ def process_documents_task(job_id: str, document_ids: list, force: bool = False)
     for doc_id in document_ids:
         try:
             doc = db.get_document(doc_id)
+            print(doc['filename'])
             if not doc:
                 continue
             
@@ -64,13 +66,22 @@ def process_documents_task(job_id: str, document_ids: list, force: bool = False)
                 chunk['metadata']['folder'] = doc.get('folder')
             
             print(f"         產生 {len(chunks)} 個 chunks，建立向量...")
-            
-            # 產生 embeddings
-            texts = [c['text'] for c in chunks]
-            embeddings = embed_texts(texts)
-            
-            # 儲存到向量資料庫
-            add_chunks(doc_id, chunks, embeddings)
+
+            # 分批處理 chunks 以節省記憶體
+            batch_size = Config.CHUNK_PROCESS_BATCH_SIZE
+            total_chunks = len(chunks)
+
+            for i in range(0, total_chunks, batch_size):
+                batch_chunks = chunks[i:i + batch_size]
+                batch_texts = [c['text'] for c in batch_chunks]
+
+                print(f"         處理批次 {i//batch_size + 1}/{(total_chunks + batch_size - 1)//batch_size} ({len(batch_chunks)} 個 chunks)")
+
+                # 產生 embeddings
+                batch_embeddings = embed_texts(batch_texts, batch_size=Config.EMBEDDING_BATCH_SIZE)
+
+                # 儲存到向量資料庫
+                add_chunks(doc_id, batch_chunks, batch_embeddings)
             
             # 更新文件狀態
             db.update_document_status(doc_id, 'indexed', chunks_count=len(chunks))
@@ -78,8 +89,9 @@ def process_documents_task(job_id: str, document_ids: list, force: bool = False)
             # 更新 metadata
             if parsed.get('metadata'):
                 doc_data = db.get_document(doc_id)
-                doc_data['metadata'] = parsed['metadata']
-                db.upsert_document(doc_data)
+                if doc_data:
+                    doc_data['metadata'] = parsed['metadata']
+                    db.upsert_document(doc_data)
             
             processed += 1
             
